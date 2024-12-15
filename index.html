@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Test Practice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .question-container {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .option {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        .selected {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        .correct {
+            background-color: #c8e6c9;
+            border-color: #4caf50;
+        }
+        .incorrect {
+            background-color: #ffcdd2;
+            border-color: #f44336;
+        }
+        button {
+            background-color: #2196f3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        .score {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .progress {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>English Test Practice</h1>
+        <div class="progress">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">0</span></div>
+        <div class="score">Score: <span id="score">0</span></div>
+        
+        <div id="questionContainer" class="question-container">
+            <h2 id="question"></h2>
+            <div id="options" class="options"></div>
+        </div>
+        
+        <button id="nextButton" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <script>
+        // Sample questions data
+        const questions = [
+            {
+                question: "Choose the correct word to complete the sentence: 'She _____ to the store yesterday.'",
+                options: ["go", "goes", "went", "gone"],
+                correct: 2
+            },
+            {
+                question: "Which sentence is grammatically correct?",
+                options: [
+                    "I have been to Paris last year.",
+                    "I went to Paris last year.",
+                    "I have gone to Paris last year.",
+                    "I had went to Paris last year."
+                ],
+                correct: 1
+            },
+            {
+                question: "Select the correct word: 'The weather is _____ today.'",
+                options: ["beautiful", "beautifully", "beauty", "beautify"],
+                correct: 0
+            },
+            {
+                question: "Choose the correct preposition: 'I'm afraid _____ spiders.'",
+                options: ["from", "of", "at", "with"],
+                correct: 1
+            },
+            {
+                question: "Which is the correct comparative form? 'This book is _____ than that one.'",
+                options: ["more interesting", "interestinger", "more interestinger", "most interesting"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+
+        // Initialize the quiz
+        function initQuiz() {
+            document.getElementById('totalQuestions').textContent = questions.length;
+            showQuestion();
+        }
+
+        // Display the current question
+        function showQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = questionData.question;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            questionData.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            document.getElementById('nextButton').style.display = 'none';
+        }
+
+        // Handle option selection
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.className = 'option');
+            options[index].className = 'option selected';
+            
+            const questionData = questions[currentQuestionIndex];
+            
+            // Show correct/incorrect feedback
+            options.forEach((option, i) => {
+                if (i === questionData.correct) {
+                    option.className = 'option correct';
+                } else if (i === index && i !== questionData.correct) {
+                    option.className = 'option incorrect';
+                }
+            });
+
+            // Update score
+            if (index === questionData.correct) {
+                score++;
+                document.getElementById('score').textContent = score;
+            }
+
+            document.getElementById('nextButton').style.display = 'block';
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                // Quiz completed
+                const container = document.getElementById('questionContainer');
+                container.innerHTML = `
+                    <h2>Quiz Completed!</h2>
+                    <p>Your final score: ${score} out of ${questions.length}</p>
+                    <p>Percentage: ${(score/questions.length*100).toFixed(1)}%</p>
+                `;
+                document.getElementById('nextButton').style.display = 'none';
+            }
+        }
+
+        // Start the quiz when page loads
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
